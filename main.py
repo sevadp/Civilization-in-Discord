@@ -167,17 +167,17 @@ async def on_message(message):
                     if config.settings[nation]["armor_up_1"] != 0:
                         count += 1
                     else:
-                        war += " Armor_UP 1 (500);"
+                        war += " Armor_UP 1 (500 armor_up_1);"
 
                     if config.settings[nation]["damage_up_1"] != 0:
                         count += 1
                     else:
-                        war += " Damage_UP 1 (500);"
+                        war += " Damage_UP 1 (500 damage_up_1);"
 
                     if config.settings[nation]["t1_squad"] != 0:
                         count += 1
                     else:
-                        war += " T1 SQUAD (500);"
+                        war += " T1 SQUAD (500 t1_squad);"
 
                     if count == 3:
                         war = "Доступные технологии:"
@@ -187,17 +187,17 @@ async def on_message(message):
                         if config.settings[nation]["armor_up_2"] != 0:
                             count += 1
                         else:
-                            war += " Armor_UP 2 (3000);"
+                            war += " Armor_UP 2 (3000 armor_up_2);"
 
                         if config.settings[nation]["damage_up_2"] != 0:
                             count += 1
                         else:
-                            war += " Damage_UP 2 (3000);"
+                            war += " Damage_UP 2 (3000 damage_up_2);"
 
                         if config.settings[nation]["t2_squad"] != 0:
                             count += 1
                         else:
-                            war += " T2 SQUAD (3000);"
+                            war += " T2 SQUAD (3000 t2_squad);"
 
                         if count == 3:
                             war = "Доступные технологии:"
@@ -207,17 +207,17 @@ async def on_message(message):
                             if config.settings[nation]["armor_up_3"] != 0:
                                 count += 1
                             else:
-                                war += " Armor_UP 3 (12000);"
+                                war += " Armor_UP 3 (12000 armor_up_3);"
 
                             if config.settings[nation]["damage_up_3"] != 0:
                                 count += 1
                             else:
-                                war += " Damage_UP 3 (12000);"
+                                war += " Damage_UP 3 (12000 damage_up_3);"
 
                             if config.settings[nation]["t3_squad"] != 0:
                                 count += 1
                             else:
-                                war += " T3 SQUAD (12000);"
+                                war += " T3 SQUAD (12000 t3_squad);"
 
                             if count == 3:
                                 war += " В военном направлении отсутствуют."
@@ -240,25 +240,25 @@ async def on_message(message):
                     if config.settings[nation]["Library"] >= 2:
                         a = 2
                     elif config.settings[nation]["Library"] == 0:
-                        war += " Библиотека (800);"
+                        war += " Библиотека (800 Library);"
 
                     if config.settings[nation]["Monument"] >= 2:
                         b = 2
                     elif config.settings[nation]["Monument"] == 0:
-                        war += " Монумент (800);"
+                        war += " Монумент (800 monument);"
 
                     if config.settings[nation]["career"] >= 2:
                         c = 2
                     elif config.settings[nation]["career"] == 0:
-                        war += " Шахта (800);"
+                        war += " Шахта (800 career);"
 
                     if a + b + c == 6:
                         if config.settings[nation]["Cottage"] == 0:
-                            war += " Коттедж (2200);"
+                            war += " Коттедж (2200 Cottage);"
                         if config.settings[nation]["Towers"] == 0:
-                            war += " Оборона (2200);"
+                            war += " Оборона (2200 Towers);"
                         if config.settings[nation]["Trade"] == 0:
-                            war += " Торговля (2200);"
+                            war += " Торговля (2200 Trade);"
 
                         if war == "":
                             await client.send_message(message.channel, "В научном направлении изучений нет.")
@@ -269,7 +269,7 @@ async def on_message(message):
                         await client.send_message(message.channel, war)
 
                 else:
-                    await client.send_message(message.channel, "Доступные технологии - Арсенал. (300 НАУКИ)")
+                    await client.send_message(message.channel, "Доступные технологии - Арсенал. (300 name - arsenal)")
 
         if message.content.startswith('!up_horde'):
             print("[command]: up_horde")
@@ -367,9 +367,18 @@ async def on_message(message):
             print("[command]: status")
             a = config.settings["funds"][config.get_nation(message.author)]
             if a != "":
+                a = "Фонд Расы: " + str(a)
+                lead = config.get_nation(message.author)
+                if lead == "humans" or lead == "dwarfs" or lead == "night_elves":
+                    a = a + "; Исследование: " + config.settings["alliance_now"][0] +\
+                        "  и набрано молоточков: " + str(config.settings["alliance_now"][1])
+                else:
+                    a = a + "; Исследование: " + config.settings["horde_now"][0] +\
+                        " и набрано молоточков: " + str(config.settings["horde_now"][1])
                 await client.send_message(message.channel, a)
 
-        # put в фонд своей расы
+
+            # put в фонд своей расы
         if message.content.startswith('!put'):
             print("[command]: put")
             a = message.content
