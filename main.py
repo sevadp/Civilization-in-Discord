@@ -6,6 +6,7 @@ import config
 import random
 import time
 import json
+import datetime
 
 DISCORD_BOT_TOKEN = 'NDQyNTYxNTkzMjIyNDk2MjU4.D0H6Zw.H50D_hx6xKPg13Sb-Ch8kCRgle8'
 
@@ -42,6 +43,40 @@ async def on_message(message):
         with open('data.json', 'r') as fp:
             config.settings = json.load(fp)
         start = 1
+
+    if config.settings["horde_now"][0] != "":
+        print("[command]: horde_now")
+        d = str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M")).split()
+        b = [int(i) for i in d[0].split("-")]
+        c = [int(i) for i in d[1].split(":")]
+        k = c[0] * 60 + c[1] + b[1] * 24 * 60 +\
+            b[1] * 24 * 30 * 60 + b[2] * 365 * 24 * 60
+        config.settings["horde_now"][1] += (k - config.settings["horde_now"][2]) * 3 \
+                                           * config.settings["resources_horde"]["science"]
+        config.settings["horde_now"][2] = k
+        if config.check_upgrades(config.settings["horde_now"][0], config.settings["horde_now"][1]):
+            config.settings["upgrades_horde"][config.settings["horde_now"][0]] = 1
+            config.settings["horde_now"][0] = ""
+            config.settings["horde_now"][1] = 0
+            config.settings["horde_now"][2] = 0
+        config.save_json()
+
+    if config.settings["alliance_now"][0] != "":
+        print("[command]: alliance_now")
+        d = str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M")).split()
+        b = [int(i) for i in d[0].split("-")]
+        c = [int(i) for i in d[1].split(":")]
+        k = c[0] * 60 + c[1] + b[1] * 24 * 60 +\
+            b[1] * 24 * 30 * 60 + b[2] * 365 * 24 * 60
+        config.settings["alliance_now"][1] += (k - config.settings["alliance_now"][2]) * 3 *\
+                                              config.settings["resources_alliance"]["science"]
+        config.settings["alliance_now"][2] = k
+        if config.check_upgrades(config.settings["alliance_now"][0], config.settings["alliance_now"][1]):
+            config.settings["alliance_horde"][config.settings["alliance_now"][0]] = 1
+            config.settings["alliance_now"][0] = ""
+            config.settings["alliance_now"][1] = 0
+            config.settings["alliance_now"][2] = 0
+        config.save_json()
 
     if str(message.author) not in config.settings["users"]:
         # Регистрация
@@ -235,6 +270,50 @@ async def on_message(message):
 
                 else:
                     await client.send_message(message.channel, "Доступные технологии - Арсенал. (300 НАУКИ)")
+
+        if message.content.startswith('!up_horde'):
+            print("[command]: up_horde")
+            a = message.content
+            if len(a.split()) != 2:
+                await client.send_message(message.channel, "Ошибка ввода.")
+            else:
+                if a.split()[1] not in list(config.settings["upgrades_horde"].keys()):
+                    await client.send_message(message.channel, "Изучение не обнаружено.")
+                else:
+                    if config.settings["upgrades_horde"][a.split()[1]] != 0:
+                        await client.send_message(message.channel, "Уже исследовано.")
+                    else:
+                        if config.settings["horde_now"][0] == "":
+                            d = str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M")).split()
+                            b = [int(i) for i in d[0].split("-")]
+                            c = [int(i) for i in d[1].split(":")]
+                            config.settings["horde_now"][2] = c[0] * 60 + c[1] + b[1] * 24 * 60 + b[1] * 24 \
+                                                              * 30 * 60 + b[2] * 365 * 24 * 60
+                            config.settings["horde_now"][1] = 0
+                            config.settings["horde_now"][0] = a.split()[1]
+                            config.save_json()
+
+        if message.content.startswith('!up_alliance'):
+            print("[command]: up_alliance")
+            a = message.content
+            if len(a.split()) != 2:
+                await client.send_message(message.channel, "Ошибка ввода.")
+            else:
+                if a.split()[1] not in list(config.settings["upgrades_alliance"].keys()):
+                    await client.send_message(message.channel, "Изучение не обнаружено.")
+                else:
+                    if config.settings["upgrades_alliance"][a.split()[1]] != 0:
+                        await client.send_message(message.channel, "Уже исследовано.")
+                    else:
+                        if config.settings["alliance_now"][0] == "":
+                            d = str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M")).split()
+                            b = [int(i) for i in d[0].split("-")]
+                            c = [int(i) for i in d[1].split(":")]
+                            config.settings["alliance_now"][2] = c[0] * 60 + c[1] + b[1] * 24 * 60 + b[1] * 24 \
+                                                              * 30 * 60 + b[2] * 365 * 24 * 60
+                            config.settings["alliance_now"][1] = 0
+                            config.settings["alliance_now"][0] = a.split()[1]
+                            config.save_json()
 
         # Перевод в общий фонд.
         if message.content.startswith('!translate'):

@@ -49,3 +49,39 @@ def get_leaders(author):
                 if list(nations.keys())[j] == str(i):
                     return nations[list(nations.keys())[j]]
     return -1
+
+
+def check_upgrades(name, now):
+    if name == "arsenal" and now >= 300:
+        return 1
+    elif name == "armor_up_1" and now >= 500:
+        return 1
+    elif name == "damage_up_1" and now >= 500:
+        return 1
+    elif name == "t1_squad" and now >= 500:
+        return 1
+    elif name == "armor_up_2" and now >= 3000:
+        return 1
+    elif name == "damage_up_2" and now >= 3000:
+        return 1
+    elif name == "t2_squad" and now >= 3000:
+        return 1
+    elif name == "armor_up_3" and now >= 12000:
+        return 1
+    elif name == "damage_up_3" and now >= 12000:
+        return 1
+    elif name == "t3_squad" and now >= 12000:
+        return 1
+    elif name == "Library" and now >= 800:
+        return 1
+    elif name == "Monument" and now >= 800:
+        return 1
+    elif name == "career" and now >= 800:
+        return 1
+    elif name == "Cottage" and now >= 2200:
+        return 1
+    elif name == "Towers" and now >= 2200:
+        return 1
+    elif name == "Trade" and now >= 2200:
+        return 1
+    return 0
